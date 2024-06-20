@@ -43,7 +43,9 @@ public class OptionsMenu extends JPanel{
         easyButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //ADD CODE HERE TO PLAY THE GAME
+                gameInstance.setRows(8);
+                gameInstance.setColumns(10);
+                gameInstance.setMines(10);
             }
         });
         easyButton.setPreferredSize(new Dimension(300, 150));
@@ -58,7 +60,9 @@ public class OptionsMenu extends JPanel{
         mediumButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //ADD CODE HERE TO PLAY THE GAME
+                gameInstance.setRows(14);
+                gameInstance.setColumns(18);
+                gameInstance.setMines(40);
             }
         });
         mediumButton.setPreferredSize(new Dimension(300, 150));
@@ -73,7 +77,9 @@ public class OptionsMenu extends JPanel{
         hardButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //ADD CODE HERE TO PLAY THE GAME
+                gameInstance.setRows(20);
+                gameInstance.setColumns(24);
+                gameInstance.setMines(99);
             }
         });
         hardButton.setPreferredSize(new Dimension(300, 150));
@@ -88,7 +94,7 @@ public class OptionsMenu extends JPanel{
         helpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //ADD CODE HERE FOR HELP
+                gameInstance.goToHelpMenu();
             }
         });
         helpButton.setPreferredSize(new Dimension(300, 150));
@@ -100,16 +106,6 @@ public class OptionsMenu extends JPanel{
 
         // Add the button panel to the panel at the bottom
         add(optionsButtonPanel);
-
-
-
-
-
-
-
-
-
-
         
 
     }

@@ -4,7 +4,14 @@ import java.awt.*;
 public class Minesweeper {
 
     private static TitleScreen titleScreen;
+    private static OptionsMenu optionsMenu;
+    private static HelpMenu helpMenu;
     private static JFrame frame;
+    
+    // Game Details
+    private int rows;
+    private int columns;
+    private int mines;
 
     public Minesweeper() {
         frame = new JFrame("MineSweeper");
@@ -21,8 +28,40 @@ public class Minesweeper {
 
     public void goToOptionsMenu() {
         frame.remove(titleScreen);
-        frame.add(new OptionsMenu(this));
+        optionsMenu = new OptionsMenu(this);
+        frame.add(optionsMenu);
         frame.revalidate();
         frame.repaint();
     }
+
+    public void goToHelpMenu() {
+        frame.remove(optionsMenu);
+        helpMenu = new HelpMenu(this);
+        frame.add(helpMenu);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    public void helpToOptions() {
+        frame.remove(helpMenu);
+        optionsMenu = new OptionsMenu(this);
+        frame.add(optionsMenu);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    // Setters
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    public void setColumns(int columns) {
+        this.columns = columns;
+    }
+
+    public void setMines(int mines) {
+        this.mines = mines;
+    }
+
 }
