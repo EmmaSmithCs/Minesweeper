@@ -68,6 +68,8 @@ public class GameGUI extends JPanel {
         backButton.addActionListener(e -> {
             gameInstance.backButton();
             gameInstance.setFlagCount(0);
+            gameInstance.setClickedButtonsCount(0);
+            gameInstance.stopTimer();
         });
         backButton.setPreferredSize(new Dimension(300, 150));
         backButton.setFont(new Font("Arial", Font.BOLD, 48));
@@ -106,6 +108,11 @@ public class GameGUI extends JPanel {
                 int tempFlags = gameInstance.getFlagCount();
                 gameInstance.setFlagCount(tempFlags - 1);
             } else if (clickedButton.getBackground().equals(new Color(255, 217, 232))) {
+                if (clickedButton.getText().equals("")) {
+                    clickedButton.setBackground(new Color(255, 145, 178));
+                } else {
+                    return;
+                }
                 clickedButton.setText("");
             } else {
                 clickedButton.setText("F");
@@ -125,9 +132,12 @@ public class GameGUI extends JPanel {
                 return;
             }
             if (value == -1) {
+                gameInstance.stopTimer();
                 clickedButton.setText("X");
                 clickedButton.setForeground(Color.RED);
                 clickedButton.setEnabled(false);
+                gameInstance.gameEndGoTo("Lose");
+                
             } else if (value == 0 && clickedButton.getText().equals("")) {
                 clickedButton.setBackground(new Color(255, 217, 232));
                 clickedButton.setText(" ");
@@ -153,10 +163,13 @@ public class GameGUI extends JPanel {
         private void checkWin() {
             System.out.println("Clicked Buttons Count: " + gameInstance.getClickedButtonsCount());
             if (gameInstance.getClickedButtonsCount() == gameInstance.getRows() * gameInstance.getColumns() - gameInstance.getMines()) {
-                gameInstance.backButton();
+                gameInstance.stopTimer();
+                gameInstance.gameEndGoTo("Win");
                 gameInstance.setClickedButtonsCount(0);
                 gameInstance.setFlagCount(0);
+                
             }
+            
         }
     }
 }

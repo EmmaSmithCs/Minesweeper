@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Random;
 
 
@@ -9,6 +11,7 @@ public class Minesweeper {
     private static OptionsMenu optionsMenu;
     private static HelpMenu helpMenu;
     private static GameGUI gameGUI;
+    private static GameEnd gameEnd;
     private static JFrame frame;
     
     // Game Details
@@ -20,6 +23,8 @@ public class Minesweeper {
     private static boolean firstClick = true;
     private static int flagCount;
     private static int clickedButtonsCount = 0;
+    private static double time = 0;
+    private static Timer timer;
 
 
 
@@ -71,6 +76,42 @@ public class Minesweeper {
         clickedButtonsCount = 0;
     }
 
+    public void gameEndGoTo(String result) {
+        frame.remove(gameGUI);
+        gameEnd = new GameEnd(this, result);
+        frame.add(gameEnd);
+        frame.revalidate();
+        frame.repaint();
+        firstClick = true;
+        clickedButtonsCount = 0;
+    }
+
+    public void playAgain() {
+        time = 0;
+        flagCount = 0;
+        frame.remove(gameEnd);
+        gameGUI = new GameGUI(this, rows, columns, mines, true);
+        frame.add(gameGUI);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    public void changeDifficulty() {
+        frame.remove(gameEnd);
+        optionsMenu = new OptionsMenu(this);
+        frame.add(optionsMenu);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    public void returnToMainMenu() {
+        frame.remove(gameEnd);
+        titleScreen = new TitleScreen(this);
+        frame.add(titleScreen);
+        frame.revalidate();
+        frame.repaint();
+    }
+
     // Setters
 
     public void setRows(int rows) {
@@ -99,6 +140,10 @@ public class Minesweeper {
 
     public void setClickedButtonsCount(int clickedButtonsCount) {
         this.clickedButtonsCount = clickedButtonsCount;
+    }
+
+    public void setTime(double time) {
+        this.time = time;
     }
 
     // Getters
@@ -131,9 +176,13 @@ public class Minesweeper {
         return clickedButtonsCount;
     }
 
+    public double getTime() {
+        return time;
+    }
 
 
     public void startGame() {
+        time = 0;
         frame.remove(optionsMenu);
         gameGUI = new GameGUI(this, rows, columns, mines, true);
         frame.add(gameGUI);
@@ -301,10 +350,37 @@ public class Minesweeper {
             }
 
             firstClick = false;
+            
+            // Start timer
+            
+
+            startTimer();
 
         }
         
 
     }
+
+    private void startTimer() {
+        timer = new Timer(100, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                time+=0.1;
+                System.out.println(time);
+            }
+        });
+        timer.start();
+    }
+
+    public void stopTimer() {
+        if (timer != null) {
+            timer.stop();
+            time = round2DP(time);
+        }
+    }
     
+    public double round2DP(double num) {
+        System.out.println("Rounded: " + Math.round(num * 100.0) / 100.0 + " Is the rounded time");
+        return Math.round(num * 100.0) / 100.0;
+    }
 }
