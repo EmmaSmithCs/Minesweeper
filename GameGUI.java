@@ -1,15 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.border.EmptyBorder;
 
 public class GameGUI extends JPanel {
     private Minesweeper gameInstance;
-    private static JButton[][] buttons;
+    private JButton[][] buttons;
+    private JLabel flagTally;
+
 
     public GameGUI(Minesweeper gameInstance, int rows, int columns, int mines, boolean firstClick) {
         this.gameInstance = gameInstance;
@@ -22,69 +21,142 @@ public class GameGUI extends JPanel {
 
         buttons = new JButton[rows][columns];
 
-        
-
-        if (firstClick) {
-            int id = 0;
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < columns; j++) {
-                    JButton button = new JButton();
-                    if (gameInstance.getDifficulty().equals("Easy")) {
-                        button.setPreferredSize(new Dimension(100, 100));
-                        button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
-                        button.setFont(new Font("Arial", Font.BOLD, 48));
-                    }
-                    else if (gameInstance.getDifficulty().equals("Medium")) {
-                        button.setPreferredSize(new Dimension(58, 58));
-                        button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-                    }
-                    else if (gameInstance.getDifficulty().equals("Hard")) {
-                        button.setPreferredSize(new Dimension(40, 40));
-                        button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
-                    }
-                    button.setBackground(new Color(255, 145, 178));
-                    button.addActionListener(new ButtonClickListener(id));
-                    buttons[i][j] = button;
-                    gamePanel.add(button);
-                    id++;
+        int id = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                JButton button = new JButton();
+                if (gameInstance.getDifficulty().equals("Easy")) {
+                    button.setPreferredSize(new Dimension(100, 100));
+                    button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
+                    button.setFont(new Font("Arial", Font.BOLD, 48));
+                } else if (gameInstance.getDifficulty().equals("Medium")) {
+                    button.setPreferredSize(new Dimension(58, 58));
+                    button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+                    button.setFont(new Font("Arial", Font.BOLD, 24));
+                } else if (gameInstance.getDifficulty().equals("Hard")) {
+                    button.setPreferredSize(new Dimension(40, 40));
+                    button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+                    button.setFont(new Font("Arial", Font.BOLD, 16));
                 }
+                button.setBackground(new Color(255, 145, 178));
+                button.addMouseListener(new MouseClickListener(id));
+                buttons[i][j] = button;
+                gamePanel.add(button);
+                id++;
             }
-        }
-        else {
-
         }
 
         // Add the game panel to the panel
         add(gamePanel);
 
+        // Add a panel for the side info
+        JPanel sidePanel = new JPanel();
+        sidePanel.setOpaque(false);
+        sidePanel.setLayout(new GridLayout(2, 1));
 
+        // Add flag tally
+        flagTally = new JLabel("Flags: " + gameInstance.getFlagCount() + "/" + mines);
+        flagTally.setFont(new Font("Arial", Font.BOLD, 48));
+        flagTally.setForeground(new Color(255, 145, 178));
+        flagTally.setBackground(new Color(255, 145, 178));
+        flagTally.setBorder(new EmptyBorder(0, 0, 0, 0));
+        sidePanel.add(flagTally);
+
+        // Add back button
+        JButton backButton = new JButton("Back");
+        
+        backButton.addActionListener(e -> {
+            gameInstance.backButton();
+            gameInstance.setFlagCount(0);
+        });
+        backButton.setPreferredSize(new Dimension(300, 150));
+        backButton.setFont(new Font("Arial", Font.BOLD, 48));
+        backButton.setForeground(Color.WHITE);
+        backButton.setBackground(new Color(255, 145, 178));
+        backButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 6));
+        sidePanel.add(backButton);
+
+        // Add the side panel to the panel
+        add(sidePanel);
     }
 
-    private class ButtonClickListener implements ActionListener {
-        private int id;
+    private class MouseClickListener extends MouseAdapter {
+        private final int id;
 
-        public ButtonClickListener(int id) {
+        public MouseClickListener(int id) {
             this.id = id;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void mousePressed(MouseEvent e) {
             JButton clickedButton = (JButton) e.getSource();
+            if (SwingUtilities.isRightMouseButton(e)) {
+                handleRightClick(clickedButton);
+            } else if (SwingUtilities.isLeftMouseButton(e)) {
+                handleLeftClick(clickedButton);
+            }
+        }
+
+        private void handleRightClick(JButton clickedButton) {
+            System.out.println("Right Clicked Button ID: " + id);
+            if (clickedButton.getText().equals("F")) {
+                clickedButton.setText("");
+                clickedButton.setForeground(Color.BLACK);
+
+                int tempFlags = gameInstance.getFlagCount();
+                gameInstance.setFlagCount(tempFlags - 1);
+            } else if (clickedButton.getBackground().equals(new Color(255, 217, 232))) {
+                clickedButton.setText("");
+            } else {
+                clickedButton.setText("F");
+                clickedButton.setForeground(Color.BLUE);
+
+                int tempFlags = gameInstance.getFlagCount();
+                gameInstance.setFlagCount(tempFlags + 1);
+            }
+            updateFlagTally();
+        }
+
+        private void handleLeftClick(JButton clickedButton) {
+            System.out.println("Left Clicked Button ID: " + id);
             gameInstance.buttonClick(id);
             int value = gameInstance.getGrid()[id / gameInstance.getColumns()][id % gameInstance.getColumns()];
+            if (clickedButton.getText().equals("F")) {
+                return;
+            }
             if (value == -1) {
                 clickedButton.setText("X");
                 clickedButton.setForeground(Color.RED);
-            }
-            else if (value == 0) {
+                clickedButton.setEnabled(false);
+            } else if (value == 0 && clickedButton.getText().equals("")) {
                 clickedButton.setBackground(new Color(255, 217, 232));
-            }
-            else {
-                clickedButton.setText(String.valueOf(value));
+                clickedButton.setText(" ");
+                clickedButton.setEnabled(false);
+                gameInstance.setClickedButtonsCount(gameInstance.getClickedButtonsCount() + 1);
+                checkWin();
+            } else {
+                if (clickedButton.getText().equals("")) {
+                    clickedButton.setText(String.valueOf(value));
                 clickedButton.setBackground(new Color(255, 217, 232));
+                clickedButton.setForeground(new Color(255, 145, 178));
+                clickedButton.setEnabled(false);
+                gameInstance.setClickedButtonsCount(gameInstance.getClickedButtonsCount() + 1);
+                checkWin();
+                }
             }
-            clickedButton.setBackground(new Color(255, 217, 232));
-            
+        }
+
+        private void updateFlagTally() {
+            flagTally.setText("Flags: " + gameInstance.getFlagCount() + "/" + gameInstance.getMines());
+        }
+
+        private void checkWin() {
+            System.out.println("Clicked Buttons Count: " + gameInstance.getClickedButtonsCount());
+            if (gameInstance.getClickedButtonsCount() == gameInstance.getRows() * gameInstance.getColumns() - gameInstance.getMines()) {
+                gameInstance.backButton();
+                gameInstance.setClickedButtonsCount(0);
+                gameInstance.setFlagCount(0);
+            }
         }
     }
 }

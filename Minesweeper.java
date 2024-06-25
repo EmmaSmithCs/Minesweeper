@@ -8,6 +8,7 @@ public class Minesweeper {
     private static TitleScreen titleScreen;
     private static OptionsMenu optionsMenu;
     private static HelpMenu helpMenu;
+    private static GameGUI gameGUI;
     private static JFrame frame;
     
     // Game Details
@@ -17,6 +18,10 @@ public class Minesweeper {
     private static String difficulty;
     private static int[][] grid;
     private static boolean firstClick = true;
+    private static int flagCount;
+    private static int clickedButtonsCount = 0;
+
+
 
     public Minesweeper() {
         frame = new JFrame("MineSweeper");
@@ -56,6 +61,16 @@ public class Minesweeper {
         frame.repaint();
     }
 
+    public void backButton() {
+        frame.remove(gameGUI);
+        titleScreen = new TitleScreen(this);
+        frame.add(optionsMenu);
+        frame.revalidate();
+        frame.repaint();
+        firstClick = true;
+        clickedButtonsCount = 0;
+    }
+
     // Setters
 
     public void setRows(int rows) {
@@ -76,6 +91,14 @@ public class Minesweeper {
 
     public void setGrid(int[][] grid) {
         this.grid = grid;
+    }
+
+    public void setFlagCount(int flagCount) {
+        this.flagCount = flagCount;
+    }
+
+    public void setClickedButtonsCount(int clickedButtonsCount) {
+        this.clickedButtonsCount = clickedButtonsCount;
     }
 
     // Getters
@@ -100,11 +123,19 @@ public class Minesweeper {
         return grid;
     }
 
+    public int getFlagCount() {
+        return flagCount;
+    }
+
+    public int getClickedButtonsCount() {
+        return clickedButtonsCount;
+    }
+
 
 
     public void startGame() {
         frame.remove(optionsMenu);
-        GameGUI gameGUI = new GameGUI(this, rows, columns, mines, true);
+        gameGUI = new GameGUI(this, rows, columns, mines, true);
         frame.add(gameGUI);
         frame.revalidate();
         frame.repaint();
