@@ -104,6 +104,7 @@ public class GameGUI extends JPanel {
             if (clickedButton.getText().equals("F")) {
                 clickedButton.setText("");
                 clickedButton.setForeground(Color.BLACK);
+                gameInstance.playSound("sound\\flagSound.wav");
 
                 int tempFlags = gameInstance.getFlagCount();
                 gameInstance.setFlagCount(tempFlags - 1);
@@ -117,6 +118,7 @@ public class GameGUI extends JPanel {
             } else {
                 clickedButton.setText("F");
                 clickedButton.setForeground(Color.BLUE);
+                gameInstance.playSound("sound\\flagSound.wav");
 
                 int tempFlags = gameInstance.getFlagCount();
                 gameInstance.setFlagCount(tempFlags + 1);
@@ -136,6 +138,7 @@ public class GameGUI extends JPanel {
                 clickedButton.setText("X");
                 clickedButton.setForeground(Color.RED);
                 clickedButton.setEnabled(false);
+                gameInstance.playSound("sound/loseSound.wav");
                 gameInstance.gameEndGoTo("Lose");
                 
             } else if (value == 0 && clickedButton.getText().equals("")) {
@@ -167,6 +170,7 @@ public class GameGUI extends JPanel {
                 gameInstance.gameEndGoTo("Win");
                 gameInstance.setClickedButtonsCount(0);
                 gameInstance.setFlagCount(0);
+                gameInstance.playSound("sound\\winSound.wav");
                 
             }
             
