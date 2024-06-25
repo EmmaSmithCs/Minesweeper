@@ -46,6 +46,8 @@ public class OptionsMenu extends JPanel{
                 gameInstance.setRows(8);
                 gameInstance.setColumns(10);
                 gameInstance.setMines(10);
+                gameInstance.setDifficulty("Easy");
+                gameInstance.startGame();
             }
         });
         easyButton.setPreferredSize(new Dimension(300, 150));
@@ -63,6 +65,8 @@ public class OptionsMenu extends JPanel{
                 gameInstance.setRows(14);
                 gameInstance.setColumns(18);
                 gameInstance.setMines(40);
+                gameInstance.setDifficulty("Medium");
+                gameInstance.startGame();
             }
         });
         mediumButton.setPreferredSize(new Dimension(300, 150));
@@ -80,6 +84,8 @@ public class OptionsMenu extends JPanel{
                 gameInstance.setRows(20);
                 gameInstance.setColumns(24);
                 gameInstance.setMines(99);
+                gameInstance.setDifficulty("Hard");
+                gameInstance.startGame();
             }
         });
         hardButton.setPreferredSize(new Dimension(300, 150));
