@@ -131,9 +131,11 @@ public class GameGUI extends JPanel {
             gameInstance.buttonClick(id);
             int value = gameInstance.getGrid()[id / gameInstance.getColumns()][id % gameInstance.getColumns()];
             if (clickedButton.getText().equals("F")) {
+                // Nothing should happen when a flagged button is clicked
                 return;
             }
             if (value == -1) {
+                // Game over
                 gameInstance.stopTimer();
                 clickedButton.setText("X");
                 clickedButton.setForeground(Color.RED);
@@ -142,10 +144,16 @@ public class GameGUI extends JPanel {
                 gameInstance.gameEndGoTo("Lose");
                 
             } else if (value == 0 && clickedButton.getText().equals("")) {
+                // Recursively reveal all adjacent cells
                 clickedButton.setBackground(new Color(255, 217, 232));
                 clickedButton.setText(" ");
                 clickedButton.setEnabled(false);
                 gameInstance.setClickedButtonsCount(gameInstance.getClickedButtonsCount() + 1);
+                System.out.println("Clicked button count: " + gameInstance.getClickedButtonsCount());
+                
+                // Recursively reveal all adjacent cells
+                checkAdjacentCells(id, clickedButton);
+                
                 checkWin();
             } else {
                 if (clickedButton.getText().equals("")) {
@@ -154,6 +162,7 @@ public class GameGUI extends JPanel {
                 clickedButton.setForeground(new Color(255, 145, 178));
                 clickedButton.setEnabled(false);
                 gameInstance.setClickedButtonsCount(gameInstance.getClickedButtonsCount() + 1);
+                System.out.println("Clicked button count: " + gameInstance.getClickedButtonsCount());
                 checkWin();
                 }
             }
@@ -174,6 +183,51 @@ public class GameGUI extends JPanel {
                 
             }
             
+        }
+
+        private void checkAdjacentCells(int id, JButton buttonClicked) {
+            int currentRow = id / gameInstance.getColumns();
+            int currentColumn = id % gameInstance.getColumns();
+        
+            int[][] directions = {
+                {-1, -1}, {-1, 0}, {-1, 1}, // Top left, top, top right
+                {0, -1}, {0, 1},            // Left, right
+                {1, -1}, {1, 0}, {1, 1}     // Bottom left, bottom, bottom right
+            };
+        
+            for (int[] direction : directions) {
+                int newRow = currentRow + direction[0];
+                int newColumn = currentColumn + direction[1];
+        
+                if (newRow >= 0 && newRow < gameInstance.getRows() && newColumn >= 0 && newColumn < gameInstance.getColumns()) {
+                    JButton newButton = buttons[newRow][newColumn];
+        
+                    // Skip if the button is already disabled (revealed) or flagged
+                    if (!newButton.isEnabled() || newButton.getText().equals("F")) {
+                        continue;
+                    }
+        
+                    int cellValue = gameInstance.getGrid()[newRow][newColumn];
+                    newButton.setBackground(new Color(255, 217, 232));
+                    if (cellValue != 0) {
+                        newButton.setText(String.valueOf(cellValue));
+                        newButton.setForeground(new Color(255, 145, 178));
+                        gameInstance.setClickedButtonsCount(gameInstance.getClickedButtonsCount() + 1);
+                        System.out.println("Clicked button count: " + gameInstance.getClickedButtonsCount());
+                    } else {
+                        newButton.setText(" ");
+                        gameInstance.setClickedButtonsCount(gameInstance.getClickedButtonsCount() + 1);
+                        System.out.println("Clicked button count: " + gameInstance.getClickedButtonsCount());
+                    }
+                    newButton.setEnabled(false);
+        
+                    // Recursively reveal adjacent cells if the current cell is empty
+                    if (cellValue == 0) {
+                        int newId = newRow * gameInstance.getColumns() + newColumn;
+                        checkAdjacentCells(newId, newButton);
+                    }
+                }
+            }
         }
     }
 }

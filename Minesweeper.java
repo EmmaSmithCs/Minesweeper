@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -17,6 +19,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.io.File;
+import java.util.Queue;
 
 
 public class Minesweeper {
@@ -39,6 +42,7 @@ public class Minesweeper {
     private static int clickedButtonsCount = 0;
     private static double time = 0;
     private static Timer timer;
+    private static int[][] clickedButtons;
 
 
 
@@ -159,6 +163,8 @@ public class Minesweeper {
     public void setTime(double time) {
         this.time = time;
     }
+
+    
 
     // Getters
 
@@ -360,8 +366,7 @@ public class Minesweeper {
                 for (int l = 0; l < columns; l++) {
                     System.out.print(grid[k][l] + " ");
                 }
-                System.out.println();
-            }
+                System.out.println();            }
 
             firstClick = false;
             
@@ -375,12 +380,13 @@ public class Minesweeper {
 
     }
 
+    
+
     private void startTimer() {
         timer = new Timer(100, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 time+=0.1;
-                System.out.println(time);
             }
         });
         timer.start();
