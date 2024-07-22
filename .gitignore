@@ -1,0 +1,14 @@
+# Ignore compiled class files
+*.class
+
+# Ignore JAR files
+*.jar
+
+# Ignore META-INF directory
+META-INF/
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
